@@ -7,33 +7,17 @@ import requests
 import json,re
 from dateutil import parser as dateparser
 from time import sleep
+from tag_regex import regex
 
-regex ={
-	'XPATH_AGGREGATE': '//span[@id="acrCustomerReviewText"]',
-	'XPATH_REVIEW_SECTION_1': '//div[contains(@id,"reviews-summary")]',
-	'XPATH_REVIEW_SECTION_2': '//div[@data-hook="review"]',
-	'XPATH_AGGREGATE_RATING': '//table[@id="histogramTable"]//tr',
-	'XPATH_PRODUCT_NAME': '//h1//span[@id="productTitle"]//text()',
-	'XPATH_PRODUCT_PRICE': '//span[@id="priceblock_ourprice"]/text()',
-	'XPATH_RATING': './/i[@data-hook="review-star-rating"]//text()',
-	'XPATH_REVIEW_HEADER': './/a[@data-hook="review-title"]//text()',
-	'XPATH_REVIEW_POSTED_DATE': './/a[contains(@href,"/profile/")]/parent::span/following-sibling::span/text()',
-	'XPATH_REVIEW_TEXT_1': './/div[@data-hook="review-body"]//text()',
-	'XPATH_REVIEW_TEXT_2': './/div//span[@data-action="columnbalancing-showfullreview"]/@data-columnbalancing-showfullreview',
-	'XPATH_REVIEW_COMMENTS': './/span[@data-hook="review-comment"]//text()',
-	'XPATH_AUTHOR': './/a[contains(@href,"/profile/")]/parent::span//text()',
-	'XPATH_REVIEW_TEXT_3': './/div[contains(@id,"dpReviews")]/div/text()',
-	'XPATH_REVIEW_TEXT_4': './/span[@data-hook="review-body"]//text()',
-}
-
-def ParseReviews(page_num):
+def ParseAPage(product_id, page_num):
 	# Added Retrying
 	for i in range(5):
 		try:
 			#This script has only been tested with Amazon.com
-			amazon_url = ('https://www.amazon.com/Gillette-Fusion-Manual-Razor-Refills/product-reviews/B004B8AZH0/ref=cm_cr_getr_d_paging_btm_'
-					+ str(page_num)  + '?pageNumber=' + str(page_num) + '&reviewerType=all_reviews')
-			# amazon_url  = 'http://www.amazon.com/dp/'+asin
+			# amazon_url = ('https://www.amazon.com/Gillette-Fusion-Manual-Razor-Refills/product-reviews/B004B8AZH0/ref=cm_cr_getr_d_paging_btm_'
+			# 		+ str(page_num)  + '?pageNumber=' + str(page_num) + '&reviewerType=all_reviews')
+			amazon_url = ('https://www.amazon.com/product-reviews/' + product_id
+							+ '/ref=cm_cr_arp_d_paging_btm_' + str(page_num)  + '?pageNumber=' + str(page_num) + '&reviewerType=all_reviews')
 			# Add some recent user agent to prevent amazon from blocking the request
 			# Find some chrome user agent strings  here https://udger.com/resources/ua-list/browser-detail?browser=Chrome
 			headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.90 Safari/537.36'}
@@ -128,8 +112,8 @@ def ReadAsin():
 	#Add your own ASINs here
 	AsinList = ['B004B8AZH0']
 	extracted_data = []
-	for i in range(20):
-		extracted_data.append(ParseReviews(i))
+	for i in range(2):
+		extracted_data.append(ParseAPage('B00X4WHP5E', i))
 	# print extracted_data
 	f=open('data.json','w')
 	json.dump(extracted_data,f,indent=4)
