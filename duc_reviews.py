@@ -2,8 +2,6 @@
 # -*- coding: utf-8 -*-
 # Written as part of https://www.scrapehero.com/how-to-scrape-amazon-product-reviews-using-python/
 import json,re
-
-from time import sleep
 from helpers import regex, getParser, getAmazonUrl, getProductInfo, getRatingsDict, getReviews
 def ScrapeProduct(product_id):
 	# Added Retrying
@@ -14,7 +12,7 @@ def ScrapeProduct(product_id):
 			product_name, product_price = getProductInfo(parser)
 			ratings_dict = getRatingsDict(parser)
 			reviews_list = getReviews(parser)
-			for page_num in range(2, 5):
+			for page_num in range(2, 293):
 				new_parser = getParser(getAmazonUrl(product_id, page_num))
 				reviews_list += getReviews(new_parser)
 			data = {
@@ -31,8 +29,8 @@ def ScrapeProduct(product_id):
 	return {"error":"failed to process the page","asin":asin}
 
 def ReadAsin():
-	extracted_data = ScrapeProduct('B004B8AZH0')
-	f = open('data.json','w')
+	extracted_data = ScrapeProduct('B002Z8E52Y')
+	f = open('data_water_pressure.json','w')
 	json.dump(extracted_data,f,indent=4)
 
 if __name__ == '__main__':
