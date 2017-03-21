@@ -5,41 +5,27 @@ import json
 import json,re
 from dateutil import parser as dateparser
 from time import sleep
-from helpers import regex, getParser, getAmazonUrl
+from helpers import regex, getParser, getAmazonUrl, getProductInfo, getRatingsDict
 
 def ParsePageFirstTime(product_id, page_num):
 	# Added Retrying
 	for i in range(5):
 		try:
-			#This script has only been tested with Amazon.com
 			amazon_url = getAmazonUrl(product_id, page_num)
 			parser = getParser(amazon_url)
+			product_name, product_price = getProductInfo(parser)
+			# Rating
 
-			raw_product_price = parser.xpath(regex['XPATH_PRODUCT_PRICE'])
-			product_price = ''.join(raw_product_price).replace(',','')
-
-			raw_product_name = parser.xpath(regex['XPATH_PRODUCT_NAME'])
-			print raw_product_name
-			product_name = ''.join(raw_product_name).strip()
-			total_ratings  = parser.xpath(regex['XPATH_AGGREGATE_RATING'])
+			# Reviews
 			reviews = parser.xpath(regex['XPATH_REVIEW_SECTION_1'])
 			if not reviews:
 				reviews = parser.xpath(regex['XPATH_REVIEW_SECTION_2'])
-			ratings_dict = {}
 			reviews_list = []
 			# print reviews
 			if not reviews:
 				raise ValueError('unable to find reviews in page')
 
-			#grabing the rating  section in product page
-			for ratings in total_ratings:
-				extracted_rating = ratings.xpath('./td//a//text()')
-				if extracted_rating:
-					rating_key = extracted_rating[0]
-					raw_raing_value = extracted_rating[1]
-					rating_value = raw_raing_value
-					if rating_key:
-						ratings_dict.update({rating_key:rating_value})
+
 			#Parsing individual reviews
 			for review in reviews:
 				raw_review_author = review.xpath(regex['XPATH_AUTHOR'])
@@ -84,7 +70,7 @@ def ParsePageFirstTime(product_id, page_num):
 
 								}
 				reviews_list.append(review_dict)
-
+			ratings_dict = getRatingsDict(parser)
 			data = {
 						'ratings':ratings_dict,
 						'reviews':reviews_list,

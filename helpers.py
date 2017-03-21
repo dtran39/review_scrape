@@ -30,3 +30,24 @@ def getAmazonUrl(product_id, page_num):
 			  + '/ref=cm_cr_arp_d_paging_btm_' + str(page_num)
 			  + '?pageNumber=' + str(page_num)
 			  + '&reviewerType=all_reviews')
+def getProductInfo(parser):
+	# price
+	raw_product_price = parser.xpath(regex['XPATH_PRODUCT_PRICE'])
+	product_price = ''.join(raw_product_price).replace(',','')
+	#name
+	raw_product_name = parser.xpath(regex['XPATH_PRODUCT_NAME'])
+	product_name = ''.join(raw_product_name).strip()
+	return (product_name, product_price)
+def getRatingsDict(parser):
+	ratings_dict = {}
+	total_ratings  = parser.xpath(regex['XPATH_AGGREGATE_RATING'])
+	#grabing the rating  section in product page
+	for ratings in total_ratings:
+		extracted_rating = ratings.xpath('./td//a//text()')
+		if extracted_rating:
+			rating_key = extracted_rating[0]
+			raw_raing_value = extracted_rating[1]
+			rating_value = raw_raing_value
+			if rating_key:
+				ratings_dict.update({rating_key:rating_value})
+	return ratings_dict
