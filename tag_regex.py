@@ -4,7 +4,7 @@ regex ={
 	'XPATH_REVIEW_SECTION_2': '//div[@data-hook="review"]',
 	'XPATH_AGGREGATE_RATING': '//table[@id="histogramTable"]//tr',
 	'XPATH_PRODUCT_NAME': '//h1//span[@id="productTitle"]//text()',
-	'XPATH_PRODUCT_PRICE': '//span[@id="priceblock_ourprice"]/text()',
+	'XPATH_PRODUCT_PRICE': '//span[@class="a-color-price arp-price"]/text()',
 	'XPATH_RATING': './/i[@data-hook="review-star-rating"]//text()',
 	'XPATH_REVIEW_HEADER': './/a[@data-hook="review-title"]//text()',
 	'XPATH_REVIEW_POSTED_DATE': './/a[contains(@href,"/profile/")]/parent::span/following-sibling::span/text()',
