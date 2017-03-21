@@ -5,7 +5,7 @@ import json,re
 
 from time import sleep
 from helpers import regex, getParser, getAmazonUrl, getProductInfo, getRatingsDict, getReviews
-def ParsePageFirstTime(product_id):
+def ScrapeProduct(product_id):
 	# Added Retrying
 	for i in range(5):
 		try:
@@ -14,8 +14,8 @@ def ParsePageFirstTime(product_id):
 			product_name, product_price = getProductInfo(parser)
 			ratings_dict = getRatingsDict(parser)
 			reviews_list = getReviews(parser)
-			for i in range(2, 5):
-				new_parser = getParser(getAmazonUrl(product_id, i))
+			for page_num in range(2, 5):
+				new_parser = getParser(getAmazonUrl(product_id, page_num))
 				reviews_list += getReviews(new_parser)
 			data = {
 						'ratings':ratings_dict,
@@ -31,13 +31,8 @@ def ParsePageFirstTime(product_id):
 	return {"error":"failed to process the page","asin":asin}
 
 def ReadAsin():
-	#Add your own ASINs here
-	AsinList = ['B004B8AZH0']
-	extracted_data = []
-	for i in range(1):
-		extracted_data.append(ParsePageFirstTime('B004B8AZH0'))
-	# print extracted_data
-	f=open('data.json','w')
+	extracted_data = ScrapeProduct('B004B8AZH0')
+	f = open('data.json','w')
 	json.dump(extracted_data,f,indent=4)
 
 if __name__ == '__main__':
