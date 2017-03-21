@@ -30,6 +30,7 @@ def ParseAPage(product_id, page_num):
 			product_price = ''.join(raw_product_price).replace(',','')
 
 			raw_product_name = parser.xpath(regex['XPATH_PRODUCT_NAME'])
+			print raw_product_name
 			product_name = ''.join(raw_product_name).strip()
 			total_ratings  = parser.xpath(regex['XPATH_AGGREGATE_RATING'])
 			reviews = parser.xpath(regex['XPATH_REVIEW_SECTION_1'])
@@ -112,8 +113,8 @@ def ReadAsin():
 	#Add your own ASINs here
 	AsinList = ['B004B8AZH0']
 	extracted_data = []
-	for i in range(2):
-		extracted_data.append(ParseAPage('B00X4WHP5E', i))
+	for i in range(1):
+		extracted_data.append(ParseAPage('B004B8AZH0', i))
 	# print extracted_data
 	f=open('data.json','w')
 	json.dump(extracted_data,f,indent=4)
