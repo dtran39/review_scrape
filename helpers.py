@@ -1,3 +1,5 @@
+from lxml import html
+import requests
 regex ={
 	'XPATH_AGGREGATE': '//span[@id="acrCustomerReviewText"]',
 	'XPATH_REVIEW_SECTION_1': '//div[contains(@id,"reviews-summary")]',
@@ -15,3 +17,16 @@ regex ={
 	'XPATH_REVIEW_TEXT_3': './/div[contains(@id,"dpReviews")]/div/text()',
 	'XPATH_REVIEW_TEXT_4': './/span[@data-hook="review-body"]//text()',
 }
+def getParser(url):
+	# Add some recent user agent to prevent amazon from blocking the request
+	# Find some chrome user agent strings  here https://udger.com/resources/ua-list/browser-detail?browser=Chrome
+	headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.90 Safari/537.36'}
+	page = requests.get(url,headers = headers)
+	page_response = page.text
+	parser = html.fromstring(page_response)
+	return parser
+def getAmazonUrl(product_id, page_num):
+	return ('https://www.amazon.com/product-reviews/' + product_id
+			  + '/ref=cm_cr_arp_d_paging_btm_' + str(page_num)
+			  + '?pageNumber=' + str(page_num)
+			  + '&reviewerType=all_reviews')

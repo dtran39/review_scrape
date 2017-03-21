@@ -1,30 +1,19 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # Written as part of https://www.scrapehero.com/how-to-scrape-amazon-product-reviews-using-python/
-from lxml import html
 import json
-import requests
 import json,re
 from dateutil import parser as dateparser
 from time import sleep
-from tag_regex import regex
+from helpers import regex, getParser, getAmazonUrl
 
-def ParseAPage(product_id, page_num):
+def ParsePageFirstTime(product_id, page_num):
 	# Added Retrying
 	for i in range(5):
 		try:
 			#This script has only been tested with Amazon.com
-			# amazon_url = ('https://www.amazon.com/Gillette-Fusion-Manual-Razor-Refills/product-reviews/B004B8AZH0/ref=cm_cr_getr_d_paging_btm_'
-			# 		+ str(page_num)  + '?pageNumber=' + str(page_num) + '&reviewerType=all_reviews')
-			amazon_url = ('https://www.amazon.com/product-reviews/' + product_id
-							+ '/ref=cm_cr_arp_d_paging_btm_' + str(page_num)  + '?pageNumber=' + str(page_num) + '&reviewerType=all_reviews')
-			# Add some recent user agent to prevent amazon from blocking the request
-			# Find some chrome user agent strings  here https://udger.com/resources/ua-list/browser-detail?browser=Chrome
-			headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.90 Safari/537.36'}
-			page = requests.get(amazon_url,headers = headers)
-			page_response = page.text
-			parser = html.fromstring(page_response)
-
+			amazon_url = getAmazonUrl(product_id, page_num)
+			parser = getParser(amazon_url)
 
 			raw_product_price = parser.xpath(regex['XPATH_PRODUCT_PRICE'])
 			product_price = ''.join(raw_product_price).replace(',','')
@@ -114,7 +103,7 @@ def ReadAsin():
 	AsinList = ['B004B8AZH0']
 	extracted_data = []
 	for i in range(1):
-		extracted_data.append(ParseAPage('B004B8AZH0', i))
+		extracted_data.append(ParsePageFirstTime('B004B8AZH0', i))
 	# print extracted_data
 	f=open('data.json','w')
 	json.dump(extracted_data,f,indent=4)
