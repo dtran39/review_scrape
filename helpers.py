@@ -1,5 +1,7 @@
 from lxml import html
 import requests
+from dateutil import parser as dateparser
+import re
 regex ={
 	'XPATH_AGGREGATE': '//span[@id="acrCustomerReviewText"]',
 	'XPATH_REVIEW_SECTION_1': '//div[contains(@id,"reviews-summary")]',
