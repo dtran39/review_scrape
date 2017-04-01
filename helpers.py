@@ -11,6 +11,7 @@ regex ={
 	'XPATH_AGGREGATE_RATING': '//table[@id="histogramTable"]//tr',
 	'XPATH_PRODUCT_NAME': '//div[@class="a-row product-title"]//h1//a[@data-hook="product-link"]//text()',
 	'XPATH_PRODUCT_PRICE': '//span[@class="a-color-price arp-price"]/text()',
+	'XPATH_NUMBER_OF_PAGES': '//li[@data-reftag="cm_cr_arp_d_paging_btm"]//a//text()',
 	'XPATH_RATING': './/i[@data-hook="review-star-rating"]//text()',
 	'XPATH_REVIEW_HEADER': './/a[@data-hook="review-title"]//text()',
 	'XPATH_REVIEW_POSTED_DATE': './/a[contains(@href,"/profile/")]/parent::span/following-sibling::span/text()',
@@ -45,6 +46,8 @@ def getAmazonReviewUrl(product_id, page_num):
 			  + '/ref=cm_cr_arp_d_paging_btm_' + str(page_num)
 			  + '?pageNumber=' + str(page_num)
 			  + '&reviewerType=all_reviews')
+def getNumberOfPages(parser):
+	return parser.xpath(regex['XPATH_NUMBER_OF_PAGES'])[-1]
 def getProductInfo(parser):
 	# price
 	raw_product_price = parser.xpath(regex['XPATH_PRODUCT_PRICE'])
