@@ -2,23 +2,24 @@
 # -*- coding: utf-8 -*-
 # Written as part of https://www.scrapehero.com/how-to-scrape-amazon-product-reviews-using-python/
 import json,re
-from helpers import regex, getParser, getAmazonUrl, getProductInfo, getRatingsDict, getReviews
+from helpers import (regex, getParser, getProductId, getAmazonReviewUrl,
+					getProductInfo, getRatingsDict, getReviews)
 def ScrapeProduct(product_id):
 	# Added Retrying
 	for i in range(5):
 		try:
-			amazon_url = getAmazonUrl(product_id, 1)
-			parser = getParser(amazon_url)
+			amazonReviewUrl = getAmazonReviewUrl(product_id, 1)
+			parser = getParser(amazonReviewUrl)
 			product_name, product_price = getProductInfo(parser)
 			ratings_dict = getRatingsDict(parser)
 			reviews_list = getReviews(parser)
-			for page_num in range(2, 293):
-				new_parser = getParser(getAmazonUrl(product_id, page_num))
+			for page_num in range(2, 3):
+				new_parser = getParser(getAmazonReviewUrl(product_id, page_num))
 				reviews_list += getReviews(new_parser)
 			data = {
 						'ratings':ratings_dict,
 						'reviews':reviews_list,
-						'url':amazon_url,
+						'url':amazonReviewUrl,
 						'price':product_price,
 						'name':product_name
 					}
@@ -28,10 +29,13 @@ def ScrapeProduct(product_id):
 
 	return {"error":"failed to process the page","asin":asin}
 
-def ReadAsin():
-	extracted_data = ScrapeProduct('B002Z8E52Y')
-	f = open('data_water_pressure.json','w')
-	json.dump(extracted_data,f,indent=4)
+def ScrapeFromUrl(url):
+	productId = getProductId(url)
+	print productId
+	extracted_data = ScrapeProduct(productId)
+	print extracted_data
+	# f = open('data_water_pressure.json','w')
+	# json.dump(extracted_data,f,indent=4)
 
 if __name__ == '__main__':
-	ReadAsin()
+	ScrapeFromUrl('https://www.amazon.com/dp/B00OQVZDJM/ref=fs_ods_fs_eink_mt')

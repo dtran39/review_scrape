@@ -3,6 +3,8 @@ import requests
 from dateutil import parser as dateparser
 import re
 regex ={
+	'ASIN'  :'/([A-Z0-9]{10})',
+	'ISBN' : '/([0-9]{10})',
 	'XPATH_AGGREGATE': '//span[@id="acrCustomerReviewText"]',
 	'XPATH_REVIEW_SECTION_1': '//div[contains(@id,"reviews-summary")]',
 	'XPATH_REVIEW_SECTION_2': '//div[@data-hook="review"]',
@@ -27,7 +29,18 @@ def getParser(url):
 	page_response = page.text
 	parser = html.fromstring(page_response)
 	return parser
-def getAmazonUrl(product_id, page_num):
+def getProductId(url):
+ # return either ASIN or ISBN
+    asin_search = re.search(regex['ASIN'], url)
+    isbn_search = re.search(regex['ISBN'], url)
+    if asin_search:
+        return asin_search.group(1)
+    elif isbn_search:
+        return isbn_search.group(1)
+    else:
+        # log this URL
+        return None
+def getAmazonReviewUrl(product_id, page_num):
 	return ('https://www.amazon.com/product-reviews/' + product_id
 			  + '/ref=cm_cr_arp_d_paging_btm_' + str(page_num)
 			  + '?pageNumber=' + str(page_num)
