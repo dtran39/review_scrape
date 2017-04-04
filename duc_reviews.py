@@ -11,8 +11,8 @@ def ScrapeProduct(product_id):
 			amazonReviewUrl = getAmazonReviewUrl(product_id, 1)
 			print amazonReviewUrl
 			parser = getParser(amazonReviewUrl)
-			numberOfPages = int(getNumberOfPages(parser).replace(",", ""))
-			product_name, product_price = getProductInfo(parser)
+			# numberOfPages = int(getNumberOfPages(parser).replace(",", ""))
+			# product_name, product_price = getProductInfo(parser)
 			ratings_dict = getRatingsDict(parser)
 			reviews_list = getReviews(parser)
 			for page_num in range(2, 3):
@@ -29,7 +29,7 @@ def ScrapeProduct(product_id):
 		except ValueError:
 			print "Retrying to get the correct response"
 
-	return {"error":"failed to process the page","asin":asin}
+	return {"error":"failed to process the page","asin":product_id}
 
 def ScrapeFromUrl(url):
 	productId = getProductId(url)
