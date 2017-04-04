@@ -9,12 +9,13 @@ def ScrapeProduct(product_id):
 	for i in range(5):
 		try:
 			amazonReviewUrl = getAmazonReviewUrl(product_id, 1)
+			print amazonReviewUrl
 			parser = getParser(amazonReviewUrl)
 			numberOfPages = int(getNumberOfPages(parser).replace(",", ""))
 			product_name, product_price = getProductInfo(parser)
 			ratings_dict = getRatingsDict(parser)
 			reviews_list = getReviews(parser)
-			for page_num in range(2, numberOfPages + 1):
+			for page_num in range(2, 3):
 				new_parser = getParser(getAmazonReviewUrl(product_id, page_num))
 				reviews_list += getReviews(new_parser)
 			data = {
